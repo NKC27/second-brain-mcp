@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+vault-export.json
+.DS_Store
