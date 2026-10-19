@@ -1,25 +1,46 @@
 {
   "name": "second-brain-mcp",
-  "version": "1.0.0",
-  "description": "A local, markdown-backed personal knowledge base exposed as an MCP server — notes, wiki-links, journaling, search, and stats for Claude, Cursor, and VS Code.",
+  "version": "1.1.0",
+  "description": "A markdown-backed second brain for AI agents, served over MCP: notes, [[wiki links]], journal, todos, templates and search. Local-first, no database.",
   "type": "module",
   "bin": {
     "second-brain-mcp": "dist/index.js"
   },
   "files": [
     "dist",
-    "vault"
+    "vault/notes",
+    "vault/journal",
+    "skill/second-brain",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
+    "test": "npm run build && node --import tsx --test test/*.test.ts",
+    "package-skill": "rm -f second-brain-skill.zip && cd skill && zip -r ../second-brain-skill.zip second-brain -x '*.DS_Store'",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"skill/evals/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"skill/evals/**/*.ts\"",
+    "eval:skill": "npm run build && tsx scripts/eval-skill.ts",
+    "prepublishOnly": "npm test"
   },
   "engines": {
     "node": ">=18"
   },
-  "keywords": ["mcp", "model-context-protocol", "claude", "knowledge-base", "notes"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "claude-code",
+    "cursor",
+    "knowledge-base",
+    "second-brain",
+    "notes",
+    "markdown",
+    "zettelkasten",
+    "agent-skill"
+  ],
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
@@ -28,7 +49,17 @@
   },
   "devDependencies": {
     "@types/node": "^26.4.1",
+    "prettier": "^3.9.10",
     "tsx": "^4.23.13",
     "typescript": "^5.7.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NKC27/second-brain-mcp.git"
+  },
+  "homepage": "https://github.com/NKC27/second-brain-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/NKC27/second-brain-mcp/issues"
+  },
+  "author": "NKC27"
 }
