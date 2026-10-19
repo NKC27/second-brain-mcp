@@ -3,3 +3,7 @@ dist/
 *.log
 vault-export.json
 .DS_Store
+
+vault/exports/
+*.zip
+vault/.trash/

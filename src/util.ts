@@ -17,10 +17,7 @@ export function levenshtein(a: string, b: string): number {
   for (let j = 0; j <= n; j++) dp[0][j] = j;
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      dp[i][j] =
-        a[i - 1] === b[j - 1]
-          ? dp[i - 1][j - 1]
-          : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
     }
   }
   return dp[m][n];
@@ -52,4 +49,26 @@ export function extractTodos(body: string): Todo[] {
 
 export function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const OPEN_TODO_LINE = /^(\s*-\s*\[) (\]\s*)(.+)$/;
+
+/** Line numbers and text of unchecked todos whose text contains `needle` (case-insensitive). */
+export function findOpenTodoLines(body: string, needle: string): { line: number; text: string }[] {
+  const wanted = needle.trim().toLowerCase();
+  const found: { line: number; text: string }[] = [];
+  body.split("\n").forEach((raw, line) => {
+    const m = raw.match(OPEN_TODO_LINE);
+    if (m && m[3]!.toLowerCase().includes(wanted)) found.push({ line, text: m[3]!.trim() });
+  });
+  return found;
+}
+
+/** Tick the checkbox on one line of a note body. */
+export function checkOffTodoLine(body: string, line: number): { body: string; text: string } {
+  const lines = body.split("\n");
+  const m = lines[line]?.match(OPEN_TODO_LINE);
+  if (!m) throw new Error(`Line ${line} is not an open todo`);
+  lines[line] = lines[line]!.replace(OPEN_TODO_LINE, "$1x$2$3");
+  return { body: lines.join("\n"), text: m[3]!.trim() };
 }

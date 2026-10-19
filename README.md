@@ -1,130 +1,132 @@
-# Second Brain MCP Server
+# Second Brain MCP
 
-A local, markdown-backed personal knowledge base exposed as an [MCP](https://modelcontextprotocol.io)
-server. No database, no cloud account — every note is a plain `.md` file with YAML
-frontmatter that you can also open, edit, and grep with normal tools. This project
-exists as a portfolio piece: it shows a complete, working MCP server (tools +
-resources + prompts) built against the current TypeScript SDK (`1.30.x`).
+A local-first second brain for AI agents. Your notes, journal and todos live as plain markdown files in a folder you own, and any [MCP](https://modelcontextprotocol.io) client (Claude Code, Claude Desktop, Cursor, VS Code) can search, write and connect them.
 
-## Features
+No database. No cloud account. No network calls. Open the folder in any editor and see exactly what your assistant sees.
 
-- **9 tools** — `create_note`, `get_note`, `update_note`, `delete_note`, `list_notes`,
-  `search_notes`, `journal_entry`, `get_backlinks`, `get_open_todos`, `get_stats`,
-  `export_vault`
-- **`[[Wiki Link]]` backlinks** — link notes by writing `[[Note Title]]` anywhere in
-  the body; `get_backlinks` and the `vault://graph` resource surface the connections
-- **Todo tracking** — `- [ ] task` checkboxes in any note or journal entry are
-  aggregated across the whole vault by `get_open_todos`
-- **Daily journal with streaks** — `journal_entry` appends a timestamped line to
-  today's journal note and reports your current consecutive-day streak
-- **Ranked full-text search** — `search_notes` scores title matches above body
-  matches and returns a highlighted snippet
-- **Fuzzy "did you mean"** — typo a title and every tool that resolves a note by
-  name suggests the closest match instead of just failing
-- **Vault dashboard** — `get_stats` renders a tag cloud, word/note counts, journal
-  streak, most-linked note, and orphan-note count as readable text
-- **3 resources** — `note://{slug}` (every note, browsable), `vault://stats` (live
-  JSON snapshot), `vault://graph` (JSON link graph for external visualization)
-- **2 prompts** — `weekly_review` (summarizes recent journal + note activity) and
-  `summarize_note` (summarize + suggest related topics for one note)
-- **Portable data** — notes live in `vault/`, override the location with the
-  `VAULT_PATH` env var; `export_vault` bundles everything to one JSON file
+An illustrative session:
 
-## Setup
+```text
+You:       Remember that pgbouncer in transaction mode breaks prepared statements.
+Assistant: Added to "Postgres connection pooling" under today's date. It's related to
+           "Production incidents", which also mentions pgbouncer. Link them?
+
+You:       What's still open?
+Assistant: 6 open todos. The three that matter today: ...
+
+You:       Mark the budget email done.
+Assistant: Checked off "email Sam about budget" in "Errands".
+```
+
+## Quick start
+
+Requires Node.js 18 or newer.
 
 ```bash
-npm install
-npm run build
+npx -y second-brain-mcp init
 ```
 
-This compiles `src/` to `dist/index.js`. The server speaks MCP over stdio, so any
-client runs it as a subprocess — there's nothing to host or deploy for local use.
-
-### Claude Desktop
-
-Add to `claude_desktop_config.json` (Settings → Developer → Edit Config):
-
-```json
-{
-  "mcpServers": {
-    "second-brain": {
-      "command": "node",
-      "args": ["/absolute/path/to/second-brain-mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-### Claude Code
+This creates `~/SecondBrain` with a couple of starter notes and prints the exact connection command for your machine. For Claude Code:
 
 ```bash
-claude mcp add second-brain -- node /absolute/path/to/second-brain-mcp/dist/index.js
+claude mcp add --scope user second-brain -- npx -y second-brain-mcp
 ```
 
-Or drop the same `mcpServers` block above into a project-level `.mcp.json`.
+`init` also prints the config for Claude Desktop, Cursor and VS Code. Restart your client, then try *"give me my vault stats"* or *"start a meeting note called Roadmap sync"*.
 
-### Cursor
+Something not working? `npx -y second-brain-mcp doctor` checks Node, your vault, broken links and duplicate titles, then starts the server the way your client would and confirms the handshake.
 
-Settings → MCP → Add new MCP server, using the same `command`/`args` shape as the
-Claude Desktop config above.
+## What it can do
 
-### VS Code (GitHub Copilot)
+**22 tools**, grouped by what you're doing:
 
-Add to `.vscode/mcp.json` in your workspace:
+| | Tools |
+| --- | --- |
+| Capture | `create_note`, `create_note_from_template`, `list_templates`, `update_note`, `journal_entry` |
+| Find | `search_notes`, `get_note`, `list_notes`, `find_related_notes`, `get_backlinks`, `list_tags`, `get_journal` |
+| Todos | `get_open_todos`, `complete_todo` |
+| Connect | `suggest_links`, `link_mentions`, `rename_note`, `merge_notes` |
+| Safety net | `delete_note` (moves to `.trash`), `restore_note`, `export_vault` |
+| Overview | `get_stats` |
 
-```json
-{
-  "servers": {
-    "second-brain": {
-      "command": "node",
-      "args": ["/absolute/path/to/second-brain-mcp/dist/index.js"]
-    }
-  }
-}
+Highlights:
+
+- **`[[Wiki links]]` and backlinks.** Link notes by writing an exact title in double brackets. `rename_note` rewrites every link for you, and `merge_notes` repoints links when you fold a duplicate into another note.
+- **Link suggestions.** `suggest_links` finds places where one note mentions another's title without linking it; `link_mentions` applies them, longest titles first, never touching existing links.
+- **Templates.** Eight built-in (meeting, decision, project, reading, person, idea, how-to, weekly-review). Add your own as `templates/<id>.md` in the vault with `{{field}}` placeholders.
+- **Todos anywhere.** `- [ ] task` in any note or journal entry is collected by `get_open_todos` and ticked by `complete_todo`.
+- **Journal with streaks.** `journal_entry` timestamps a line into today's file.
+- **Typo-proof.** Misspell a title and you get "Did you mean ...?" instead of a dead end.
+- **Recoverable deletes.** Deleted notes go to `.trash/`; `restore_note` brings them back.
+
+Plus 3 resources (`note://{slug}`, `vault://stats`, `vault://graph`) and 4 prompts (`weekly_review`, `daily_plan`, `capture_meeting`, `summarize_note`) with autocomplete for note titles.
+
+## Your vault
+
+```text
+~/SecondBrain/
+  notes/       one .md file per note, with YAML frontmatter
+  journal/     one file per day, e.g. 2026-10-19.md
+  templates/   optional custom templates
+  .trash/      deleted notes, restorable
+  exports/     JSON backups from export_vault
 ```
 
-Restart the client after adding the config. Ask it something like *"what are my
-open todos?"* or *"search my notes for MCP"* — it already has 5 interlinked seed
-notes and 3 days of journal entries to explore.
+The server picks the vault in this order: the `VAULT_PATH` environment variable, then `~/SecondBrain` if it exists, then a small bundled demo vault. `get_stats` always tells you which one is active.
+
+## Safety and privacy
+
+- **Local only.** The server makes no network requests and sends nothing anywhere.
+- **Annotated tools.** Every tool is marked read-only, write or destructive so clients can skip approval prompts for reads and ask before deletes.
+- **Contained.** File names are validated at the storage layer, so no tool argument or resource URI can read or write outside the vault, and `export_vault` only writes `.json` files inside it.
+- **Recoverable.** Nothing is erased by `delete_note` or `merge_notes`; both move notes to `.trash/`.
+- **No locking.** Two assistants editing the same note at once can overwrite each other.
+
+## Agent skill
+
+The tools are only half of it: an agent also needs to know *when* to use them. [`skill/second-brain/`](skill/second-brain) is a `SKILL.md` package that teaches an agent to search before it creates, link with exact titles, write absolute dates, never invent links or quotes, and confirm before destructive changes. Copy the folder into your agent's skills directory, or build the zip with `npm run package-skill`.
+
+Because instructions can drift from code, a test checks the skill against the live server: every tool and argument it names must exist, and every tool must be documented with exactly its real arguments.
+
+`npm run eval:skill` goes further and runs seven behavioural scenarios (extend instead of duplicating, admit when nothing is recorded, ask before ticking an ambiguous todo, confirm before deleting, and so on) against a real Claude session, with and without the skill. It needs the `claude` CLI logged in.
 
 ## Development
 
 ```bash
-npm run dev       # tsx watch — runs src/index.ts directly, no build step
-npm run inspect    # builds, then launches the official MCP Inspector against it
+git clone https://github.com/NKC27/second-brain-mcp.git
+cd second-brain-mcp
+npm install
+npm test            # builds, then runs 66 tests
+npm run dev         # run the server from source (tsx watch)
+npm run inspect     # open the official MCP Inspector against the built server
+npm run format      # Prettier
 ```
 
-Set `DEBUG_MCP=1` to get timestamped debug logging on stderr (stdout is reserved
-for JSON-RPC traffic, so all logging must go to stderr — the SDK doesn't enforce
-this for you).
+The tests cover the pure logic, the storage layer (including path containment), the CLI, and end-to-end sessions that spawn the built server and drive it through the official MCP client. Set `DEBUG_MCP=1` for debug logging on stderr (stdout is reserved for the protocol).
 
-By default the vault lives at `vault/` next to this README. Point at a different
-folder — your real notes, or a per-client sandbox — with:
-
-```bash
-VAULT_PATH=/path/to/my/vault node dist/index.js
-```
-
-## Project layout
-
-```
+```text
 src/
-  vault.ts     file I/O: load/save notes, slugify, fuzzy title match, journal append
-  search.ts    pure functions: ranked search, [[link]] graph, vault-wide stats
-  util.ts      slugify, Levenshtein distance, word count, link/todo extraction
-  logger.ts    stderr-only debug logging
-  index.ts     registers tools/resources/prompts with McpServer, starts stdio transport
-vault/
-  notes/       one .md file per note
-  journal/     one .md file per day, e.g. 2026-09-03.md
+  index.ts       entry point: CLI command or MCP server on stdio
+  server.ts      tools, resources and prompts
+  vault.ts       file storage: notes, journal, templates, trash
+  search.ts      ranking, link graph, link suggestions, related notes, stats
+  templates.ts   built-in templates and rendering
+  cli.ts         init and doctor
+  config.ts      which vault to use
+skill/
+  second-brain/  the agent skill (SKILL.md plus reference guides)
+  evals/         behavioural scenarios and graders for the skill
+test/            unit, CLI, end-to-end and skill-lint tests
+vault/           small demo vault used when you haven't run init
 ```
 
-## Extending it
+## Roadmap
 
-Some natural next steps, also tracked as todos inside the seed vault itself
-(ask the server — `get_open_todos` will show you):
+- Streamable HTTP transport with authentication, for a shared hosted vault
+- Semantic search with embeddings for large vaults
+- Importers for Obsidian and Notion exports
+- A confirm-before-delete prompt from inside the server, using MCP elicitation
 
-- Swap `search_notes`' term-frequency scoring for embeddings once a vault gets large
-- Add an HTTP/SSE transport alongside stdio for a remotely-hosted, multi-client vault
-- Add an `outputSchema` to tools like `get_stats` for structured (not just text) results
-- Wire `vault://graph` into a small D3/force-graph viewer for a visual "second brain" map
+## Licence
+
+MIT. See [LICENSE](LICENSE).
