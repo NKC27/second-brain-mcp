@@ -123,7 +123,7 @@ tags:
 function setupInstructions(vaultDir: string, isDefaultLocation: boolean): string {
   const viaNpx = entryPath.includes(`${path.sep}_npx${path.sep}`);
   const command = viaNpx ? "npx" : "node";
-  const argList = viaNpx ? ["-y", "second-brain-mcp"] : [entryPath];
+  const argList = viaNpx ? ["-y", "@nkc27/second-brain-mcp"] : [entryPath];
   const server = { command, args: argList, ...(isDefaultLocation ? {} : { env: { VAULT_PATH: vaultDir } }) };
   const claudeCodeEnv = isDefaultLocation ? "" : ` -e VAULT_PATH=${JSON.stringify(vaultDir)}`;
   const block = (value: unknown) =>
@@ -180,7 +180,7 @@ async function init(args: string[]): Promise<number> {
   if (isDefault) {
     console.log("Your vault is at the default location, so no VAULT_PATH setting is needed.");
   }
-  console.log("Check everything with:  second-brain-mcp doctor");
+  console.log("Check everything with:  npx -y @nkc27/second-brain-mcp doctor");
   return 0;
 }
 
@@ -203,7 +203,7 @@ async function doctor(): Promise<number> {
   const location = resolveVault();
   report("ok", `Vault: ${location.path} (${describeSource(location.source)})`);
   if (location.source === "demo") {
-    report("warn", "You are using the demo vault. Run `second-brain-mcp init` to create your own.");
+    report("warn", "You are using the demo vault. Run `npx -y @nkc27/second-brain-mcp init` to create your own.");
   }
 
   const vault = new Vault(location.path);

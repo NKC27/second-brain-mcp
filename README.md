@@ -23,18 +23,18 @@ Assistant: Checked off "email Sam about budget" in "Errands".
 Requires Node.js 18 or newer.
 
 ```bash
-npx -y second-brain-mcp init
+npx -y @nkc27/second-brain-mcp init
 ```
 
 This creates `~/SecondBrain` with a couple of starter notes and prints the exact connection command for your machine. For Claude Code:
 
 ```bash
-claude mcp add --scope user second-brain -- npx -y second-brain-mcp
+claude mcp add --scope user second-brain -- npx -y @nkc27/second-brain-mcp
 ```
 
 `init` also prints the config for Claude Desktop, Cursor and VS Code. Restart your client, then try *"give me my vault stats"* or *"start a meeting note called Roadmap sync"*.
 
-Something not working? `npx -y second-brain-mcp doctor` checks Node, your vault, broken links and duplicate titles, then starts the server the way your client would and confirms the handshake.
+Something not working? `npx -y @nkc27/second-brain-mcp doctor` checks Node, your vault, broken links and duplicate titles, then starts the server the way your client would and confirms the handshake.
 
 ## What it can do
 

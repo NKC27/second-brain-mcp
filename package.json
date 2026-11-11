@@ -1,5 +1,5 @@
 {
-  "name": "second-brain-mcp",
+  "name": "@nkc27/second-brain-mcp",
   "version": "1.1.0",
   "description": "A markdown-backed second brain for AI agents, served over MCP: notes, [[wiki links]], journal, todos, templates and search. Local-first, no database.",
   "type": "module",

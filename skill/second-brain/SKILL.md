@@ -9,7 +9,7 @@ You have access to the user's long-term memory: plain markdown notes and a daily
 
 ## Before the first note task in a conversation
 
-1. **Check the tools exist.** Look for `search_notes`, `create_note` and friends (clients may prefix them, e.g. `mcp__second-brain__search_notes`). If they are missing, do not pretend to save anything. Say the server isn't connected and walk the user through `reference/setup.md`; `npx -y second-brain-mcp doctor` diagnoses most problems.
+1. **Check the tools exist.** Look for `search_notes`, `create_note` and friends (clients may prefix them, e.g. `mcp__second-brain__search_notes`). If they are missing, do not pretend to save anything. Say the server isn't connected and walk the user through `reference/setup.md`; `npx -y @nkc27/second-brain-mcp doctor` diagnoses most problems.
 2. **Orient once with `get_stats`.** It shows where the vault lives, how big it is and the top tags.
    - If it says *the bundled demo vault* and the user is saving real content, tell them once that notes are going into the demo folder and offer to set up their own (`reference/setup.md`, step 1).
    - If the vault is empty, welcome them and offer a first note instead of searching.

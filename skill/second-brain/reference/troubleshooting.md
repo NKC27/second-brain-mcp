@@ -1,12 +1,12 @@
 # Troubleshooting
 
-Start with `npx -y second-brain-mcp doctor`. It checks most of what follows and ends with a live test of the server.
+Start with `npx -y @nkc27/second-brain-mcp doctor`. It checks most of what follows and ends with a live test of the server.
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
 | The assistant has no note tools | Server not registered, or the client wasn't restarted | Re-run the connect step in `setup.md`, restart the client. In Claude Code, `claude mcp list` should show `second-brain` as connected |
 | `command not found: npx` or the server fails to start | Node.js isn't installed or is older than 18 | Install Node 18+ from nodejs.org, then restart the client. GUI apps sometimes don't see your shell's PATH; use the full path to `npx` or `node` in the config |
-| Tools exist but notes land in a demo folder | No `~/SecondBrain` and no `VAULT_PATH` | Run `npx -y second-brain-mcp init`, restart the client, and check `get_stats` shows your vault |
+| Tools exist but notes land in a demo folder | No `~/SecondBrain` and no `VAULT_PATH` | Run `npx -y @nkc27/second-brain-mcp init`, restart the client, and check `get_stats` shows your vault |
 | "Did you mean ...?" for a note you know exists | Title typo, or the note has no `title:` in its frontmatter (so its title is the filename) | Confirm the suggestion, or fix the title with `rename_note`. `doctor` lists notes missing a title |
 | `create_note` says the note already exists | Same title, or a title that produces the same slug (`C++ Tips` and `C Tips`) | Use `update_note` with `append: true`, or choose a more distinct title |
 | A `[[link]]` isn't recognised | The title doesn't match any note exactly (case is ignored, everything else counts) | Check the spelling with `search_notes`. `doctor` lists links that point nowhere |
@@ -22,7 +22,7 @@ Start with `npx -y second-brain-mcp doctor`. It checks most of what follows and 
 Run the server by hand to see its logs:
 
 ```bash
-DEBUG_MCP=1 npx -y second-brain-mcp
+DEBUG_MCP=1 npx -y @nkc27/second-brain-mcp
 ```
 
 It waits for a client on stdin, so quit with Ctrl+C; debug lines go to stderr. When reporting an issue, include the output of `doctor` (it lists counts and a few note titles, never note bodies; remove any titles you'd rather not share) at https://github.com/NKC27/second-brain-mcp/issues.

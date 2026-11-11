@@ -7,10 +7,10 @@ Requires Node.js 18 or newer (`node -v`).
 ## 1. Create your own vault
 
 ```bash
-npx -y second-brain-mcp init
+npx -y @nkc27/second-brain-mcp init
 ```
 
-This creates `~/SecondBrain` with two starter notes and an example template, then prints the exact connection commands for your machine. Prefer a different folder? `npx -y second-brain-mcp init --dir ~/Documents/notes`.
+This creates `~/SecondBrain` with two starter notes and an example template, then prints the exact connection commands for your machine. Prefer a different folder? `npx -y @nkc27/second-brain-mcp init --dir ~/Documents/notes`.
 
 Everything is plain markdown, so you can open the folder in any editor, sync it, or put it in git.
 
@@ -21,7 +21,7 @@ Use whichever you have, then restart the client.
 **Claude Code**
 
 ```bash
-claude mcp add --scope user second-brain -- npx -y second-brain-mcp
+claude mcp add --scope user second-brain -- npx -y @nkc27/second-brain-mcp
 ```
 
 **Claude Desktop** (`claude_desktop_config.json`) and **Cursor** (`.cursor/mcp.json`)
@@ -29,7 +29,7 @@ claude mcp add --scope user second-brain -- npx -y second-brain-mcp
 ```json
 {
   "mcpServers": {
-    "second-brain": { "command": "npx", "args": ["-y", "second-brain-mcp"] }
+    "second-brain": { "command": "npx", "args": ["-y", "@nkc27/second-brain-mcp"] }
   }
 }
 ```
@@ -39,17 +39,17 @@ claude mcp add --scope user second-brain -- npx -y second-brain-mcp
 ```json
 {
   "servers": {
-    "second-brain": { "command": "npx", "args": ["-y", "second-brain-mcp"] }
+    "second-brain": { "command": "npx", "args": ["-y", "@nkc27/second-brain-mcp"] }
   }
 }
 ```
 
-A custom vault folder is not at `~/SecondBrain`? Add an environment variable: `claude mcp add --scope user second-brain -e VAULT_PATH=/path/to/vault -- npx -y second-brain-mcp`, or `"env": { "VAULT_PATH": "/path/to/vault" }` in the JSON configs.
+A custom vault folder is not at `~/SecondBrain`? Add an environment variable: `claude mcp add --scope user second-brain -e VAULT_PATH=/path/to/vault -- npx -y @nkc27/second-brain-mcp`, or `"env": { "VAULT_PATH": "/path/to/vault" }` in the JSON configs.
 
 ## 3. Check it works
 
 ```bash
-npx -y second-brain-mcp doctor
+npx -y @nkc27/second-brain-mcp doctor
 ```
 
 It checks Node, finds your vault, tests that it's writable, flags broken `[[links]]` and duplicate titles, and starts the server exactly as your AI client would to confirm the handshake. Then ask your assistant: *"Give me my vault stats."*
@@ -75,6 +75,6 @@ Then register `node /absolute/path/to/second-brain-mcp/dist/index.js` instead of
 
 ## Updating and removing
 
-- Update: `npx -y second-brain-mcp@latest doctor` fetches the newest version; the plain `npx -y second-brain-mcp` entry uses a cached copy until npx refreshes it.
+- Update: `npx -y @nkc27/second-brain-mcp@latest doctor` fetches the newest version; the plain `npx -y @nkc27/second-brain-mcp` entry uses a cached copy until npx refreshes it.
 - Remove the connection: `claude mcp remove second-brain`, or delete the entry from your client's config.
 - Your notes stay in the vault folder. Deleting the server never touches them.

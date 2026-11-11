@@ -2,6 +2,8 @@
 
 ## 1.1.0
 
+Published on npm as `@nkc27/second-brain-mcp` (the unscoped name was refused as too similar to an existing package). The command it installs is still `second-brain-mcp`.
+
 **New tools** (22 in total, up from 11)
 - `complete_todo`: tick a todo by part of its text, in any note or journal
 - `create_note_from_template` and `list_templates`: eight built-in templates (meeting, decision, project, reading, person, idea, how-to, weekly-review) plus your own in `templates/`
