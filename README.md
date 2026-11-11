@@ -86,6 +86,8 @@ The server picks the vault in this order: the `VAULT_PATH` environment variable,
 
 The tools are only half of it: an agent also needs to know *when* to use them. [`skill/second-brain/`](skill/second-brain) is a `SKILL.md` package that teaches an agent to search before it creates, link with exact titles, write absolute dates, never invent links or quotes, and confirm before destructive changes. Copy the folder into your agent's skills directory, or build the zip with `npm run package-skill`.
 
+**Want more?** [Second Brain Pro](https://www.agensi.io/skills/second-brain-pro-notes-journal-weekly-reviews) is a paid skill for the same server. It adds step-by-step workflows for daily planning, weekly reviews, meeting notes with owned action items, decision records, projects, reading notes, people and vault maintenance, plus worked examples and a troubleshooting guide. The free skill and server stay free and fully usable on their own.
+
 Because instructions can drift from code, a test checks the skill against the live server: every tool and argument it names must exist, and every tool must be documented with exactly its real arguments.
 
 `npm run eval:skill` goes further and runs seven behavioural scenarios (extend instead of duplicating, admit when nothing is recorded, ask before ticking an ambiguous todo, confirm before deleting, and so on) against a real Claude session, with and without the skill. It needs the `claude` CLI logged in.
